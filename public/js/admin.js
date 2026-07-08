@@ -1,0 +1,249 @@
+const loginScreen = document.getElementById('loginScreen');
+const dashboard = document.getElementById('dashboard');
+
+function money(n) {
+  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(n);
+}
+
+// ===== Login =====
+document.getElementById('loginBtn').onclick = async () => {
+  const password = document.getElementById('loginPassword').value;
+  const errorEl = document.getElementById('loginError');
+  errorEl.textContent = '';
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  });
+  if (res.ok) {
+    showDashboard();
+  } else {
+    const data = await res.json();
+    errorEl.textContent = data.error || 'Login failed';
+  }
+};
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('loginBtn').click();
+});
+
+document.getElementById('logoutBtn').onclick = async () => {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  location.reload();
+};
+
+async function checkSession() {
+  const res = await fetch('/api/products/admin/all');
+  if (res.ok) showDashboard();
+}
+
+function showDashboard() {
+  loginScreen.style.display = 'none';
+  dashboard.style.display = 'flex';
+  loadProducts();
+  loadOrders();
+  loadSettings();
+}
+
+// ===== Tabs =====
+document.querySelectorAll('.nav-link[data-tab]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.nav-link[data-tab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  };
+});
+
+// ===== Products =====
+async function loadProducts() {
+  const res = await fetch('/api/products/admin/all');
+  const products = await res.json();
+  const body = document.getElementById('productsBody');
+  body.innerHTML = products.map(p => `
+    <tr>
+      <td><img src="${p.image}"></td>
+      <td>${p.name}</td>
+      <td>${p.category}</td>
+      <td>${money(p.price)}</td>
+      <td>${p.stock}</td>
+      <td>${p.active ? 'Visible' : 'Hidden'}</td>
+      <td class="row-actions">
+        <button data-id="${p.id}" class="edit">Edit</button>
+        <button data-id="${p.id}" class="del">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+
+  body.querySelectorAll('.edit').forEach(btn => btn.onclick = () => openProductModal(products.find(p => p.id === btn.dataset.id)));
+  body.querySelectorAll('.del').forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm('Delete this product?')) return;
+      await fetch('/api/products/' + btn.dataset.id, { method: 'DELETE' });
+      loadProducts();
+    };
+  });
+}
+
+const productModal = document.getElementById('productModal');
+function openProductModal(product) {
+  document.getElementById('productError').textContent = '';
+  document.getElementById('productModalTitle').textContent = product ? 'Edit product' : 'Add product';
+  document.getElementById('p_id').value = product ? product.id : '';
+  document.getElementById('p_name').value = product ? product.name : '';
+  document.getElementById('p_desc').value = product ? product.description : '';
+  document.getElementById('p_price').value = product ? product.price : '';
+  document.getElementById('p_stock').value = product ? product.stock : '';
+  document.getElementById('p_category').value = product ? product.category : '';
+  document.getElementById('p_image').value = product ? product.image : '';
+  document.getElementById('p_active').checked = product ? product.active : true;
+  productModal.classList.add('open');
+}
+document.getElementById('newProductBtn').onclick = () => openProductModal(null);
+document.getElementById('cancelProductBtn').onclick = () => productModal.classList.remove('open');
+
+document.getElementById('saveProductBtn').onclick = async () => {
+  const id = document.getElementById('p_id').value;
+  const payload = {
+    name: document.getElementById('p_name').value.trim(),
+    description: document.getElementById('p_desc').value.trim(),
+    price: Number(document.getElementById('p_price').value),
+    stock: Number(document.getElementById('p_stock').value),
+    category: document.getElementById('p_category').value.trim() || 'General',
+    image: document.getElementById('p_image').value.trim(),
+    active: document.getElementById('p_active').checked
+  };
+  const errorEl = document.getElementById('productError');
+  if (!payload.name || !payload.price) {
+    errorEl.textContent = 'Name and price are required.';
+    return;
+  }
+  const res = await fetch(id ? '/api/products/' + id : '/api/products', {
+    method: id ? 'PUT' : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    productModal.classList.remove('open');
+    loadProducts();
+  } else {
+    const data = await res.json();
+    errorEl.textContent = data.error || 'Could not save product';
+  }
+};
+
+// ===== Orders =====
+async function loadOrders() {
+  const res = await fetch('/api/orders');
+  const orders = await res.json();
+  const body = document.getElementById('ordersBody');
+  if (!orders.length) {
+    body.innerHTML = `<tr><td colspan="6">No orders yet.</td></tr>`;
+    return;
+  }
+  body.innerHTML = orders.map(o => `
+    <tr>
+      <td>#${o.id.slice(0,8)}</td>
+      <td>${o.customer.name}<br><span style="color:var(--ink-soft);font-size:12px">${o.customer.phone}</span></td>
+      <td>${o.items.map(i => `${i.qty}× ${i.name}`).join('<br>')}</td>
+      <td>${money(o.total)}</td>
+      <td>
+        <select data-id="${o.id}" class="status-select">
+          ${['pending','paid','fulfilled','cancelled'].map(s => `<option value="${s}" ${s===o.status?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+    </tr>
+  `).join('');
+
+  body.querySelectorAll('.status-select').forEach(sel => {
+    sel.onchange = async () => {
+      await fetch(`/api/orders/${sel.dataset.id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: sel.value })
+      });
+    };
+  });
+}
+
+// ===== Settings =====
+async function loadSettings() {
+  const res = await fetch('/api/settings');
+  const s = await res.json();
+  document.getElementById('setStoreName').value = s.storeName;
+  document.getElementById('setWhatsapp').value = s.whatsappNumber;
+  document.getElementById('setPrimaryColor').value = s.primaryColor || '#3F5D4E';
+  document.getElementById('setAccentColor').value = s.accentColor || '#B8863B';
+  renderLogoPreview(s.logoUrl);
+}
+
+function renderLogoPreview(logoUrl) {
+  const wrap = document.getElementById('logoPreviewWrap');
+  wrap.innerHTML = logoUrl
+    ? `<img src="${logoUrl}" style="height:48px;display:block">`
+    : `<span style="color:var(--ink-soft);font-size:13px">No logo uploaded yet — your store name text will show instead.</span>`;
+}
+
+document.getElementById('uploadLogoBtn').onclick = async () => {
+  const fileInput = document.getElementById('logoFile');
+  const msgEl = document.getElementById('logoMsg');
+  if (!fileInput.files.length) {
+    msgEl.style.color = 'var(--danger)';
+    msgEl.textContent = 'Choose an image file first.';
+    return;
+  }
+  const formData = new FormData();
+  formData.append('logo', fileInput.files[0]);
+  const res = await fetch('/api/settings/logo', { method: 'POST', body: formData });
+  const data = await res.json();
+  if (res.ok) {
+    msgEl.style.color = 'var(--success)';
+    msgEl.textContent = 'Logo updated!';
+    renderLogoPreview(data.logoUrl);
+    fileInput.value = '';
+  } else {
+    msgEl.style.color = 'var(--danger)';
+    msgEl.textContent = data.error || 'Could not upload logo.';
+  }
+};
+
+document.getElementById('removeLogoBtn').onclick = async () => {
+  await fetch('/api/settings/logo', { method: 'DELETE' });
+  renderLogoPreview('');
+  document.getElementById('logoMsg').textContent = 'Logo removed.';
+};
+
+document.getElementById('saveSettingsBtn').onclick = async () => {
+  await fetch('/api/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      storeName: document.getElementById('setStoreName').value.trim(),
+      whatsappNumber: document.getElementById('setWhatsapp').value.trim(),
+      primaryColor: document.getElementById('setPrimaryColor').value,
+      accentColor: document.getElementById('setAccentColor').value
+    })
+  });
+  document.getElementById('settingsMsg').textContent = 'Saved!';
+  setTimeout(() => document.getElementById('settingsMsg').textContent = '', 2000);
+};
+document.getElementById('changePassBtn').onclick = async () => {
+  const newPassword = document.getElementById('newPassword').value;
+  const res = await fetch('/api/settings/password', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ newPassword })
+  });
+  const msgEl = document.getElementById('passMsg');
+  if (res.ok) {
+    msgEl.style.color = 'var(--success)';
+    msgEl.textContent = 'Password updated.';
+    document.getElementById('newPassword').value = '';
+  } else {
+    const data = await res.json();
+    msgEl.style.color = 'var(--danger)';
+    msgEl.textContent = data.error;
+  }
+};
+
+checkSession();
