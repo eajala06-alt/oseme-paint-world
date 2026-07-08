@@ -40,18 +40,30 @@ button { font-family: inherit; cursor: pointer; }
   border-bottom: 1px solid var(--card-border);
   position: sticky;
   top: 0;
-  background: var(--bg);
+  background: var(--header-bg, var(--bg));
+  color: var(--header-text, var(--ink));
   z-index: 20;
 }
 .site-header .logo {
   font-size: 24px;
   font-weight: 700;
+  color: inherit;
 }
 .logo-wrap img {
   height: 40px;
   display: block;
 }
 .header-actions { display: flex; align-items: center; gap: 18px; }
+.site-nav { flex: 1; display: flex; justify-content: center; gap: 24px; }
+.site-nav a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  color: inherit;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 3px;
+}
+.site-nav a:hover { border-color: var(--brass); }
 .cart-btn {
   background: var(--forest);
   color: #fff;
@@ -72,24 +84,71 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* ===== Hero ===== */
-.hero {
-  padding: 64px 32px 40px;
-  max-width: 900px;
+/* ===== Full-bleed hero banner (landing page) ===== */
+.hero-banner {
+  position: relative;
+  width: 100%;
+  min-height: 62vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--forest), var(--brass));
 }
-.hero .eyebrow {
+.hero-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hero-media img, .hero-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(15,20,17,0.6), rgba(15,20,17,0.15));
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 48px;
+  max-width: 620px;
+  color: #fff;
+}
+.hero-content .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 12px;
-  color: var(--brass-dark);
-  font-weight: 600;
+  font-weight: 700;
+  color: #fff;
+  opacity: 0.85;
   margin-bottom: 10px;
 }
-.hero h1 { font-size: clamp(32px, 5vw, 52px); margin: 0 0 14px; }
-.hero p { color: var(--ink-soft); font-size: 17px; max-width: 560px; }
-.hero-cta {
-  display: inline-block; margin-top: 22px; background: var(--forest); color: #fff;
-  text-decoration: none; padding: 12px 22px; border-radius: var(--radius); font-weight: 600; font-size: 14px;
+.hero-content h1 {
+  color: #fff;
+  font-size: clamp(32px, 5vw, 52px);
+  margin: 0 0 14px;
 }
+.hero-content p {
+  color: rgba(255,255,255,0.9);
+  font-size: 17px;
+  max-width: 520px;
+}
+.hero-cta {
+  display: inline-block;
+  margin-top: 22px;
+  background: #fff;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 12px 22px;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 14px;
+}
+.hero-cta:hover { background: var(--brass); color: #fff; }
 
 /* ===== Landing feature strip ===== */
 .features {
@@ -108,6 +167,28 @@ button { font-family: inherit; cursor: pointer; }
 .feature-icon { font-size: 22px; margin-bottom: 8px; }
 .feature h3 { font-size: 16px; margin: 0 0 6px; }
 .feature p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+
+/* ===== Featured products (landing page) ===== */
+.featured-section { padding: 8px 32px 60px; }
+.featured-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 22px;
+}
+.featured-header h2 { font-size: 26px; margin: 0; }
+.view-all-link {
+  text-decoration: none;
+  color: var(--forest);
+  font-weight: 600;
+  font-size: 14px;
+}
+.view-all-link:hover { text-decoration: underline; }
+
+/* ===== Shop page heading ===== */
+.shop-heading { padding: 48px 32px 12px; max-width: 700px; }
+.shop-heading h1 { font-size: clamp(28px, 4vw, 40px); margin: 0 0 8px; }
+.shop-heading p { color: var(--ink-soft); font-size: 15px; margin: 0; }
 
 /* ===== Product grid ===== */
 .catalog { padding: 8px 32px 80px; }
@@ -260,7 +341,12 @@ button { font-family: inherit; cursor: pointer; }
 footer { text-align: center; padding: 30px; color: var(--ink-soft); font-size: 13px; }
 
 @media (max-width: 640px) {
-  .site-header { padding: 14px 18px; }
+  .site-header { padding: 14px 18px; flex-wrap: wrap; gap: 10px; }
+  .site-nav { order: 3; width: 100%; justify-content: flex-start; }
+  .hero-banner { min-height: 48vh; }
+  .hero-content { padding: 0 22px; }
   .hero { padding: 40px 18px 24px; }
   .catalog { padding: 8px 18px 60px; }
+  .featured-section { padding: 8px 18px 40px; }
+  .shop-heading { padding: 32px 18px 8px; }
 }

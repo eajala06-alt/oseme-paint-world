@@ -4,11 +4,12 @@ A working e-commerce site for Oseme Paint World: storefront, cart, Paystack chec
 
 ## What's included
 
-- **Storefront** (`/`) — product catalog, category filters, cart drawer, checkout.
+- **Landing page** (`/`) — a welcome page with a full-width hero banner (upload your own photo or video), a trust/features strip, and a "best sellers" preview linking to the full catalogue.
+- **Shop page** (`/shop.html`) — the full product catalogue with category filters. The cart works identically across both pages.
 - **Payments** — Paystack (test mode by default). Card/bank/USSD handled by Paystack's popup, no card data ever touches your server.
-- **Admin dashboard** (`/admin.html`) — password-protected. Add/edit/delete products, view and update order status, change store name/WhatsApp number/password.
+- **Admin dashboard** (`/admin.html`) — password-protected. Add/edit/delete products, view and update order status, upload your logo and hero banner, pick brand colors, change store name/WhatsApp number/password.
 - **WhatsApp widget** — a small chat bubble that answers common questions (delivery, payment, returns) and has a "Talk to a human" button that opens a real WhatsApp chat with your business number.
-- **Data storage** — a simple JSON file database (`data/db.json`). No external database to set up for the MVP. (See "Growing past the MVP" below for when to upgrade this.)
+- **Data storage** — a simple JSON file database (`storage/data/db.json`) plus uploaded images (`storage/uploads/`). No external database to set up for the MVP.
 
 ## 1. Run it locally
 
@@ -40,6 +41,7 @@ Test payments with Paystack's [test cards](https://paystack.com/docs/payments/te
 
 Log into `/admin.html` → **Settings**:
 - **Logo**: upload a PNG/JPG/SVG/WEBP (under 2MB) directly — no code, no image hosting needed. Remove it anytime to fall back to your store name as text.
+- **Hero banner**: upload a photo or video (up to 25MB) for the full-width homepage banner. Until you upload one, it shows a plain color background using your brand colors, so the page never looks broken.
 - **Brand colors**: two color pickers — "Primary" (used for the header cart button, active filters) and "Accent" (used for price tags and the checkout button). Changes apply instantly across the storefront.
 - **Store name & WhatsApp number**: same tab.
 
@@ -85,10 +87,10 @@ This path uses only GitHub's and Railway's websites. You need the `oseme-paint-w
 3. Your admin dashboard is at the same link + `/admin.html`.
 
 ### Step E — Keep your data safe (important)
-By default, Railway's filesystem can reset when you redeploy, which would erase your products/orders/logo. Attach a free **Volume** so they persist:
-1. In your Railway service, go to the **Volumes** tab → **New Volume**.
-2. Set the **mount path** to `/app/data` and create it. This keeps `data/db.json` (your products and orders) safe across deploys.
-3. For the logo upload to also survive redeploys, add a second volume mounted at `/app/public/uploads`.
+By default, Railway's filesystem can reset when you redeploy, which would erase your products/orders/logo. Attach a free **Volume** so they persist — only **one** volume is needed:
+1. In your Railway service, go to the **Volumes** tab → **New Volume** (or **Add Volume** on the project canvas, depending on your Railway version).
+2. Set the **mount path** to `/app/storage` and create it. This single folder holds both your database (`storage/data/db.json`) and your uploaded logo (`storage/uploads/`), so one volume covers everything.
+3. Attaching a volume restarts your service — that's expected.
 
 ### Whenever you make future changes (like editing code, not admin settings)
 Since admin-panel changes (products, logo, colors) are saved to the live server directly, you never need to touch GitHub for those — they take effect immediately. You'd only go back to GitHub if you (or I) change the actual code later; in that case, upload the changed files the same way (Step A, "uploading an existing file") and Railway redeploys automatically.

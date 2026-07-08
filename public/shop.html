@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oseme Paint World</title>
+<title>Shop — Oseme Paint World</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
@@ -17,7 +17,7 @@
     <span class="logo" id="storeName">Oseme Paint World</span>
   </div>
   <nav class="site-nav">
-    <a href="/shop.html">Shop</a>
+    <a href="/">Home</a>
   </nav>
   <div class="header-actions">
     <button class="cart-btn" id="cartToggle">
@@ -26,43 +26,14 @@
   </div>
 </header>
 
-<!-- Full-bleed hero banner. Add a photo or video from Admin → Settings → Hero banner.
-     Until then, this shows a plain brand-colored placeholder. -->
-<section class="hero-banner">
-  <div class="hero-media" id="heroMedia"></div>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <div class="eyebrow">Now open</div>
-    <h1>Colour that lasts, quality you can trust.</h1>
-    <p>Paints, tools and accessories for every project — fast delivery, and a real person on WhatsApp if you ever need help choosing.</p>
-    <a href="/shop.html" class="hero-cta">Shop now →</a>
-  </div>
+<section class="shop-heading">
+  <h1>Shop all products</h1>
+  <p>Browse the full catalogue — filter by category to find what you need.</p>
 </section>
 
-<section class="features">
-  <div class="feature">
-    <div class="feature-icon">🔒</div>
-    <h3>Secure checkout</h3>
-    <p>Payments processed by Paystack — your card details never touch our servers.</p>
-  </div>
-  <div class="feature">
-    <div class="feature-icon">🚚</div>
-    <h3>Fast delivery</h3>
-    <p>Orders are packed and shipped within 1–2 business days.</p>
-  </div>
-  <div class="feature">
-    <div class="feature-icon">💬</div>
-    <h3>Real support</h3>
-    <p>Questions? Chat with a real person on WhatsApp anytime.</p>
-  </div>
-</section>
-
-<section class="featured-section">
-  <div class="featured-header">
-    <h2>Best sellers</h2>
-    <a href="/shop.html" class="view-all-link">View full catalogue →</a>
-  </div>
-  <div class="grid" id="featuredGrid">Loading products…</div>
+<section class="catalog" id="catalog">
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid">Loading products…</div>
 </section>
 
 <footer>© <span id="year"></span> <span id="storeNameFooter">Oseme Paint World</span>. All rights reserved.</footer>
@@ -120,7 +91,7 @@
 </button>
 
 <script src="/js/common.js"></script>
-<script src="/js/home.js"></script>
+<script src="/js/catalog.js"></script>
 <script src="/js/whatsapp-widget.js"></script>
 </body>
 </html>

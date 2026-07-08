@@ -174,7 +174,9 @@ async function loadSettings() {
   document.getElementById('setWhatsapp').value = s.whatsappNumber;
   document.getElementById('setPrimaryColor').value = s.primaryColor || '#3F5D4E';
   document.getElementById('setAccentColor').value = s.accentColor || '#B8863B';
+  document.getElementById('setHeaderColor').value = s.headerColor || '#FBFAF6';
   renderLogoPreview(s.logoUrl);
+  renderHeroPreview(s.heroUrl);
 }
 
 function renderLogoPreview(logoUrl) {
@@ -182,6 +184,18 @@ function renderLogoPreview(logoUrl) {
   wrap.innerHTML = logoUrl
     ? `<img src="${logoUrl}" style="height:48px;display:block">`
     : `<span style="color:var(--ink-soft);font-size:13px">No logo uploaded yet — your store name text will show instead.</span>`;
+}
+
+const HERO_VIDEO_EXT = /\.(mp4|webm|mov)(\?.*)?$/i;
+function renderHeroPreview(heroUrl) {
+  const wrap = document.getElementById('heroPreviewWrap');
+  if (!heroUrl) {
+    wrap.innerHTML = `<span style="color:var(--ink-soft);font-size:13px">No banner uploaded yet — the homepage shows a plain color background instead.</span>`;
+    return;
+  }
+  wrap.innerHTML = HERO_VIDEO_EXT.test(heroUrl)
+    ? `<video src="${heroUrl}" style="width:100%;max-width:320px;border-radius:8px" controls muted></video>`
+    : `<img src="${heroUrl}" style="width:100%;max-width:320px;border-radius:8px;display:block">`;
 }
 
 document.getElementById('uploadLogoBtn').onclick = async () => {
@@ -213,6 +227,37 @@ document.getElementById('removeLogoBtn').onclick = async () => {
   document.getElementById('logoMsg').textContent = 'Logo removed.';
 };
 
+document.getElementById('uploadHeroBtn').onclick = async () => {
+  const fileInput = document.getElementById('heroFile');
+  const msgEl = document.getElementById('heroMsg');
+  if (!fileInput.files.length) {
+    msgEl.style.color = 'var(--danger)';
+    msgEl.textContent = 'Choose a photo or video first.';
+    return;
+  }
+  msgEl.style.color = 'var(--ink-soft)';
+  msgEl.textContent = 'Uploading… this can take a moment for videos.';
+  const formData = new FormData();
+  formData.append('hero', fileInput.files[0]);
+  const res = await fetch('/api/settings/hero', { method: 'POST', body: formData });
+  const data = await res.json();
+  if (res.ok) {
+    msgEl.style.color = 'var(--success)';
+    msgEl.textContent = 'Hero banner updated!';
+    renderHeroPreview(data.heroUrl);
+    fileInput.value = '';
+  } else {
+    msgEl.style.color = 'var(--danger)';
+    msgEl.textContent = data.error || 'Could not upload banner.';
+  }
+};
+
+document.getElementById('removeHeroBtn').onclick = async () => {
+  await fetch('/api/settings/hero', { method: 'DELETE' });
+  renderHeroPreview('');
+  document.getElementById('heroMsg').textContent = 'Banner removed.';
+};
+
 document.getElementById('saveSettingsBtn').onclick = async () => {
   await fetch('/api/settings', {
     method: 'PUT',
@@ -221,7 +266,8 @@ document.getElementById('saveSettingsBtn').onclick = async () => {
       storeName: document.getElementById('setStoreName').value.trim(),
       whatsappNumber: document.getElementById('setWhatsapp').value.trim(),
       primaryColor: document.getElementById('setPrimaryColor').value,
-      accentColor: document.getElementById('setAccentColor').value
+      accentColor: document.getElementById('setAccentColor').value,
+      headerColor: document.getElementById('setHeaderColor').value
     })
   });
   document.getElementById('settingsMsg').textContent = 'Saved!';

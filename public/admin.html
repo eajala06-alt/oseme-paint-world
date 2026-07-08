@@ -70,8 +70,23 @@
           </div>
           <div id="logoMsg" class="success-text"></div>
         </div>
+
         <div class="field">
-          <label>Primary color (buttons, header)</label>
+          <label>Hero banner (homepage — photo or video, up to 25MB)</label>
+          <div id="heroPreviewWrap" style="margin-bottom:8px"></div>
+          <input type="file" id="heroFile" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,video/quicktime">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn-secondary" id="uploadHeroBtn" style="flex:1">Upload banner</button>
+            <button class="btn-secondary" id="removeHeroBtn" style="flex:1;color:var(--danger)">Remove banner</button>
+          </div>
+          <div id="heroMsg" class="success-text"></div>
+        </div>
+        <div class="field">
+          <label>Top banner color (where your logo sits)</label>
+          <input type="color" id="setHeaderColor" style="height:40px">
+        </div>
+        <div class="field">
+          <label>Primary color (cart button, active filters)</label>
           <input type="color" id="setPrimaryColor" style="height:40px">
         </div>
         <div class="field">

@@ -4,10 +4,9 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuid } = require('uuid');
 
-// Make sure the data folder exists before lowdb tries to write to it.
-// (Empty folders don't always survive a zip download or a drag-and-drop
-// upload to GitHub, so we create it here instead of relying on that.)
-const dataDir = path.join(__dirname, 'data');
+// Everything that needs to survive redeploys (database + uploaded logo) lives
+// under one shared "storage" folder, so a single mounted volume covers both.
+const dataDir = path.join(__dirname, 'storage', 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
 const adapter = new FileSync(path.join(dataDir, 'db.json'));
@@ -63,6 +62,8 @@ db.defaults({
     whatsappNumber: '2348000000000',
     currency: 'NGN',
     logoUrl: '',
+    heroUrl: '',
+    headerColor: '#FBFAF6',
     primaryColor: '#3F5D4E',
     accentColor: '#B8863B',
     adminPasswordHash: null // set on first run from env

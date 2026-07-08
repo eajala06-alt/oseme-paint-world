@@ -16,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// Uploaded logo files live in the shared storage folder (see db.js/settings.js), not in public/
+app.use('/uploads', express.static(path.join(__dirname, 'storage', 'uploads')));
 
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
