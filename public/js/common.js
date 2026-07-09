@@ -52,7 +52,20 @@ function pickReadableTextColor(hex) {
 async function loadProducts() {
   const res = await fetch('/api/products');
   window.PRODUCTS = await res.json();
+  pruneCart(); // silently drop any cart items that no longer exist / aren't for sale
   return window.PRODUCTS;
+}
+
+// If a product was deleted, hidden, or the store data was reset since an item was
+// added to a visitor's cart, that old reference would otherwise sit in localStorage
+// forever and only surface as a confusing error at checkout. Clean it up quietly instead.
+function pruneCart() {
+  const validIds = new Set(window.PRODUCTS.map(p => p.id));
+  const before = window.CART.length;
+  window.CART = window.CART.filter(i => validIds.has(i.productId));
+  if (window.CART.length !== before) {
+    localStorage.setItem('cart', JSON.stringify(window.CART));
+  }
 }
 
 // ===== Product card markup (used by both the featured strip and the full catalogue) =====

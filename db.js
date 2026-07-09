@@ -12,47 +12,58 @@ if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 const adapter = new FileSync(path.join(dataDir, 'db.json'));
 const db = low(adapter);
 
-// Default structure + seed products so the store isn't empty on first launch
+// Default structure + seed data, based on Oseme Paint World's real product line,
+// services and project history, so the store isn't empty on first launch.
 db.defaults({
   products: [
     {
       id: uuid(),
-      name: 'Premium Emulsion Paint - White (4L)',
-      description: 'Smooth matte finish, one-coat coverage, interior walls.',
+      name: 'O-Seme Emulsion Paint (For Walls & Ceilings)',
+      description: 'Smooth, long-lasting emulsion finish for interior walls and ceilings.',
       price: 18500,
       stock: 40,
-      category: 'Interior Paint',
-      image: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600',
+      category: 'Decorative Paint',
+      image: '/img/seed/product-emulsion.jpg',
       active: true
     },
     {
       id: uuid(),
-      name: 'Weatherproof Exterior Paint (4L)',
-      description: 'Rain and UV-resistant coating for external walls, 5-year durability.',
-      price: 24000,
+      name: 'O-Seme Pure Bright Satin',
+      description: 'Luxury satin finish with a smooth, elegant sheen for interior walls.',
+      price: 21000,
       stock: 30,
+      category: 'Decorative Paint',
+      image: '/img/seed/product-satin.jpg',
+      active: true
+    },
+    {
+      id: uuid(),
+      name: 'O-Seme Super Brilliant Matt (Weather Shield)',
+      description: 'Weather-resistant matt finish built for lasting exterior protection.',
+      price: 23500,
+      stock: 25,
       category: 'Exterior Paint',
-      image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600',
+      image: '/img/seed/product-matt.jpg',
       active: true
     },
     {
       id: uuid(),
-      name: 'Professional Paint Brush Set (5pc)',
-      description: 'Assorted sizes for trim, edges and detail work.',
-      price: 7500,
-      stock: 55,
-      category: 'Tools & Accessories',
-      image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600',
+      name: 'O-Seme Screeding Paint',
+      description: 'Heavy-duty screeding paint for surface preparation and protective coating.',
+      price: 26000,
+      stock: 20,
+      category: 'Industrial & Protective',
+      image: '/img/seed/product-screeding.jpg',
       active: true
     },
     {
       id: uuid(),
-      name: 'Paint Roller & Tray Kit',
-      description: 'Heavy-duty roller, extension pole and tray for large surfaces.',
-      price: 9800,
-      stock: 45,
-      category: 'Tools & Accessories',
-      image: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600',
+      name: 'O-Seme Stucco Paint',
+      description: 'Textured decorative stucco finish for a distinctive architectural look.',
+      price: 24500,
+      stock: 20,
+      category: 'Specialty Decorative',
+      image: '/img/seed/product-stucco-group.jpg',
       active: true
     }
   ],
@@ -60,64 +71,72 @@ db.defaults({
   projects: [
     {
       id: uuid(),
-      title: 'Lekki Waterfront Villa',
-      location: 'Lekki, Lagos',
-      description: 'Full interior and exterior repaint of a 5-bedroom villa, including weatherproof exterior coating and a custom feature wall in the living room.',
-      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=700',
+      title: 'Abuja Skyline Luxury Residences',
+      location: 'Abuja',
+      description: 'Supply of premium satin paints, luxury decorative stucco finishes, customized wall coatings, and technical finishing support for high-end residential apartments. Started January 2021, completed September 2021.',
+      image: '/img/seed/project-warehouse-1.jpg',
       active: true
     },
     {
       id: uuid(),
-      title: 'Wuse Office Complex',
-      location: 'Wuse II, Abuja',
-      description: 'Commercial repaint across 3 floors of office space, completed over a weekend to avoid business disruption. Included wood finishing on reception furniture.',
-      image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=700',
+      title: 'Emerald Crest Hotel & Suites Renovation',
+      location: 'Lagos',
+      description: 'Provision of weather-resistant exterior coatings, textured decorative finishes, luxury interior paint systems, and specialized decorative treatments for hospitality renovation works. Started March 2021, completed December 2021.',
+      image: '/img/seed/project-warehouse-2.jpg',
       active: true
     },
     {
       id: uuid(),
-      title: 'Maitama Family Home',
-      location: 'Maitama, Abuja',
-      description: 'Full exterior repaint and driveway wall coating, plus interior color consultation for a family relocating into a newly built home.',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700',
+      title: 'Unity Corporate Towers',
+      location: 'Port Harcourt',
+      description: 'Supply of industrial-grade protective coatings, decorative finishing systems, and premium architectural paint solutions for a commercial office complex. Started June 2022, completed February 2023.',
+      image: '/img/seed/project-warehouse-1.jpg',
       active: true
     },
     {
       id: uuid(),
-      title: 'Garki Retail Storefront',
-      location: 'Garki, Abuja',
-      description: 'Bright, brand-matched storefront repaint for a retail client, including signage-ready wall prep and a durable exterior finish.',
-      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=700',
+      title: 'Dubia Mall (Bright Grillz)',
+      location: 'Abuja',
+      description: 'Dual-finish painting project — internal and external application for bar, kitchen and lounge areas with priming, glossy finishes for high-traffic zones, matt finishes for ambiance, and precise detailing around fixtures and fittings. Started July 2025, completed November 2025.',
+      image: '/img/seed/project-warehouse-2.jpg',
+      active: true
+    },
+    {
+      id: uuid(),
+      title: 'Area Command & Commercial Bank',
+      location: 'Okpela, Edo State',
+      description: 'Comprehensive interior and exterior painting of office spaces — application of high-durability stucco finishes, wall priming, and precise color coordination to elevate workplace aesthetics. Started May 2026, ongoing.',
+      image: '/img/seed/project-warehouse-1.jpg',
       active: true
     }
   ],
   services: [
     {
       id: uuid(),
-      title: 'Interior Painting',
-      description: 'Full-room or whole-home interior painting with clean, even coverage and minimal disruption to your space.',
-      image: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600',
+      title: 'Product Specification Guidance',
+      description: 'Expert guidance on choosing the right paint and coating products for your specific project needs.',
+      image: '/img/seed/product-emulsion.jpg',
       active: true
     },
     {
       id: uuid(),
-      title: 'Exterior Painting',
-      description: 'Weatherproof exterior coatings built to withstand sun, rain and everyday wear for years to come.',
-      image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600',
+      title: 'Surface Preparation Consultation',
+      description: 'Professional advice on preparing surfaces properly for the best finish and long-term durability.',
+      image: '/img/seed/product-matt.jpg',
       active: true
     },
     {
       id: uuid(),
-      title: 'Color Consultation',
+      title: 'Color Advisory Services',
       description: 'Not sure what colors work? Our team helps you choose a palette that fits your space and style.',
-      image: 'https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=600',
+      image: '/img/seed/product-satin.jpg',
       active: true
     },
     {
       id: uuid(),
-      title: 'Wood Finishing & Varnishing',
-      description: 'Protective, high-gloss or matte finishes for doors, furniture and wooden fixtures.',
-      image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=600',
+      title: 'Contractor Support & Bulk Supply',
+      description: 'Project-based coating solutions, contractor support programs and bulk supply coordination for large-scale jobs.',
+      image: '/img/seed/product-screeding.jpg',
       active: true
     }
   ],
@@ -131,11 +150,11 @@ db.defaults({
     primaryColor: '#3F5D4E',
     accentColor: '#B8863B',
     aboutTitle: 'About Oseme Paint World',
-    aboutBody: 'Oseme Paint World has been supplying quality paints, tools and finishing products for homes and businesses. We combine premium materials with real, hands-on expertise — whether you\'re picking up supplies for a DIY project or need a full professional repaint.',
-    aboutImage: '',
-    contactEmail: 'hello@example.com',
+    aboutBody: 'Oseme Paint World (OPW) is the premium paint manufacturing and decorative finishes division of Oseme Group of Companies. The company specializes in the manufacturing, distribution and supply of high-performance decorative, architectural and protective coating solutions developed to meet the demands of modern construction and architectural design.\n\nEstablished with a commitment to quality craftsmanship and decorative excellence, OPW has steadily grown into a recognized and trusted brand within Nigeria\'s paint and coatings industry.\n\nBy combining premium raw materials, advanced manufacturing systems and strict quality-control procedures, OPW consistently delivers products capable of meeting both local and international standards — from luxury residential estates and hotels to commercial complexes and government buildings.',
+    aboutImage: '/img/seed/product-stucco-group.jpg',
+    contactEmail: 'hello@osemepaintworld.com',
     contactPhone: '2348000000000',
-    contactAddress: 'Abuja, Nigeria',
+    contactAddress: 'F01 Building Materials Market, Kubwa, Abuja, Nigeria',
     adminPasswordHash: null // set on first run from env
   }
 }).write();
