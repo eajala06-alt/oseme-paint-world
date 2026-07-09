@@ -17,7 +17,12 @@
     <span class="logo" id="storeName">Oseme Paint World</span>
   </div>
   <nav class="site-nav">
+    <a href="/" class="active">Home</a>
     <a href="/shop.html">Shop</a>
+    <a href="/about.html">About</a>
+    <a href="/services.html">Services</a>
+    <a href="/projects.html">Projects</a>
+    <a href="/contact.html">Contact</a>
   </nav>
   <div class="header-actions">
     <button class="cart-btn" id="cartToggle">
@@ -57,12 +62,15 @@
   </div>
 </section>
 
-<section class="featured-section">
-  <div class="featured-header">
-    <h2>Best sellers</h2>
-    <a href="/shop.html" class="view-all-link">View full catalogue →</a>
+<section class="projects-preview">
+  <div class="section-header">
+    <h2>Recent projects</h2>
+    <a href="/projects.html" class="view-all-link">View all projects →</a>
   </div>
-  <div class="grid" id="featuredGrid">Loading products…</div>
+  <div class="scroller-wrap">
+    <div class="scroller" id="projectsScroller">Loading projects…</div>
+    <button class="scroll-arrow" id="scrollArrowBtn" aria-label="See more projects">›</button>
+  </div>
 </section>
 
 <footer>© <span id="year"></span> <span id="storeNameFooter">Oseme Paint World</span>. All rights reserved.</footer>

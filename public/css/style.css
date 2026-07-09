@@ -64,6 +64,7 @@ button { font-family: inherit; cursor: pointer; }
   padding-bottom: 3px;
 }
 .site-nav a:hover { border-color: var(--brass); }
+.site-nav a.active { border-color: var(--brass); }
 .cart-btn {
   background: var(--forest);
   color: #fff;
@@ -189,6 +190,128 @@ button { font-family: inherit; cursor: pointer; }
 .shop-heading { padding: 48px 32px 12px; max-width: 700px; }
 .shop-heading h1 { font-size: clamp(28px, 4vw, 40px); margin: 0 0 8px; }
 .shop-heading p { color: var(--ink-soft); font-size: 15px; margin: 0; }
+
+/* ===== Generic page heading (About / Services / Projects / Contact) ===== */
+.page-heading { padding: 48px 32px 12px; max-width: 700px; }
+.page-heading h1 { font-size: clamp(28px, 4vw, 40px); margin: 0 0 8px; }
+.page-heading p { color: var(--ink-soft); font-size: 15px; margin: 0; }
+
+/* ===== Projects preview scroller (landing page) ===== */
+.projects-preview { padding: 8px 0 60px; }
+.projects-preview .section-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 0 32px; margin-bottom: 20px;
+}
+.projects-preview .section-header h2 { font-size: 26px; margin: 0; }
+.scroller-wrap { position: relative; }
+.scroller {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 4px 32px 12px;
+  scrollbar-width: none;
+}
+.scroller::-webkit-scrollbar { display: none; }
+.project-card {
+  flex: 0 0 240px;
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: inherit;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease;
+}
+.project-card:hover { transform: translateY(-3px); }
+.project-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: #eee; }
+.project-card-title { padding: 12px 14px; font-weight: 600; font-size: 14px; }
+.scroll-arrow {
+  position: absolute;
+  top: 40%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(31,42,36,0.85);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.scroll-arrow:hover { background: var(--brass); }
+
+/* ===== Projects full grid / detail (projects.html) ===== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
+  padding: 8px 32px 80px;
+}
+.project-detail { padding: 8px 32px 80px; max-width: 800px; }
+.project-detail img { width: 100%; max-height: 420px; object-fit: cover; border-radius: var(--radius); margin-bottom: 24px; }
+.project-detail .location-badge {
+  display: inline-block; background: var(--brass); color: #fff; font-weight: 600; font-size: 13px;
+  padding: 4px 12px; border-radius: 999px; margin-bottom: 12px;
+}
+.project-detail h1 { font-size: clamp(26px, 4vw, 38px); margin: 0 0 12px; }
+.project-detail .desc-text { color: var(--ink-soft); font-size: 16px; line-height: 1.7; }
+.back-link { display: inline-block; margin-bottom: 20px; color: var(--forest); font-weight: 600; text-decoration: none; font-size: 14px; }
+
+/* ===== Services page ===== */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
+  padding: 8px 32px 80px;
+}
+.service-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.service-card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; background: #eee; }
+.service-card-body { padding: 18px; }
+.service-card-body h3 { margin: 0 0 8px; font-size: 18px; }
+.service-card-body p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+
+/* ===== About page ===== */
+.about-section { padding: 8px 32px 80px; max-width: 760px; }
+.about-section img { width: 100%; border-radius: var(--radius); margin-bottom: 28px; max-height: 380px; object-fit: cover; }
+.about-section .about-body { font-size: 16px; line-height: 1.8; color: var(--ink-soft); white-space: pre-line; }
+
+/* ===== Contact page ===== */
+.contact-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 8px 32px 80px;
+  max-width: 1000px;
+}
+.contact-info-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  height: fit-content;
+}
+.contact-info-row { display: flex; gap: 12px; margin-bottom: 18px; align-items: flex-start; }
+.contact-info-row .icon { font-size: 18px; }
+.contact-info-row div { font-size: 14px; }
+.contact-info-row .label { font-weight: 600; margin-bottom: 2px; }
+.contact-form .field { margin-bottom: 16px; }
+.contact-submit-btn {
+  background: var(--brass); color: #fff; border: none; padding: 12px 22px;
+  border-radius: var(--radius); font-weight: 700; font-size: 14px;
+}
 
 /* ===== Product grid ===== */
 .catalog { padding: 8px 32px 80px; }
@@ -342,11 +465,15 @@ footer { text-align: center; padding: 30px; color: var(--ink-soft); font-size: 1
 
 @media (max-width: 640px) {
   .site-header { padding: 14px 18px; flex-wrap: wrap; gap: 10px; }
-  .site-nav { order: 3; width: 100%; justify-content: flex-start; }
+  .site-nav { order: 3; width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 14px; }
   .hero-banner { min-height: 48vh; }
   .hero-content { padding: 0 22px; }
   .hero { padding: 40px 18px 24px; }
   .catalog { padding: 8px 18px 60px; }
   .featured-section { padding: 8px 18px 40px; }
-  .shop-heading { padding: 32px 18px 8px; }
+  .shop-heading, .page-heading { padding: 32px 18px 8px; }
+  .projects-preview .section-header { padding: 0 18px; }
+  .scroller { padding: 4px 18px 12px; }
+  .projects-grid, .services-grid, .about-section, .project-detail { padding: 8px 18px 60px; }
+  .contact-wrap { grid-template-columns: 1fr; padding: 8px 18px 60px; }
 }

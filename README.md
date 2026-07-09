@@ -4,10 +4,14 @@ A working e-commerce site for Oseme Paint World: storefront, cart, Paystack chec
 
 ## What's included
 
-- **Landing page** (`/`) — a welcome page with a full-width hero banner (upload your own photo or video), a trust/features strip, and a "best sellers" preview linking to the full catalogue.
-- **Shop page** (`/shop.html`) — the full product catalogue with category filters. The cart works identically across both pages.
+- **Landing page** (`/`) — a welcome page with a full-width hero banner (upload your own photo or video), a trust/features strip, and a horizontally-scrolling "Recent projects" preview.
+- **Shop page** (`/shop.html`) — the full product catalogue with category filters. The cart works identically across every page on the site.
+- **About page** (`/about.html`) — editable title, body text and photo.
+- **Services page** (`/services.html`) — a list of services you offer, each with a photo, title and description.
+- **Projects page** (`/projects.html`) — a full gallery of past projects; clicking one shows its title, location and full description.
+- **Contact page** (`/contact.html`) — your email, phone, address and WhatsApp, plus a simple contact form.
 - **Payments** — Paystack (test mode by default). Card/bank/USSD handled by Paystack's popup, no card data ever touches your server.
-- **Admin dashboard** (`/admin.html`) — password-protected. Add/edit/delete products, view and update order status, upload your logo and hero banner, pick brand colors, change store name/WhatsApp number/password.
+- **Admin dashboard** (`/admin.html`) — password-protected. Manage products, projects, services, orders, page content (About/Contact), branding (logo, hero banner, colors) and your password — all with direct photo upload, no image hosting or code needed.
 - **WhatsApp widget** — a small chat bubble that answers common questions (delivery, payment, returns) and has a "Talk to a human" button that opens a real WhatsApp chat with your business number.
 - **Data storage** — a simple JSON file database (`storage/data/db.json`) plus uploaded images (`storage/uploads/`). No external database to set up for the MVP.
 
@@ -45,7 +49,13 @@ Log into `/admin.html` → **Settings**:
 - **Brand colors**: two color pickers — "Primary" (used for the header cart button, active filters) and "Accent" (used for price tags and the checkout button). Changes apply instantly across the storefront.
 - **Store name & WhatsApp number**: same tab.
 
-Products tab → add/edit/delete products, each with a name, price, stock, category, and image URL (paste a link — e.g. upload photos to [imgur.com](https://imgur.com) and use that link).
+Products tab → add/edit/delete products, each with a name, price, stock, category, and a photo you upload directly from your computer.
+
+Projects tab → add/edit/delete portfolio projects (title, location, description, photo). These show on the landing page preview and the full Projects page.
+
+Services tab → add/edit/delete services you offer (title, description, photo).
+
+Pages tab → edit your About page (title, body text, photo) and Contact page (email, phone, address).
 
 WhatsApp bot's automatic answers (delivery/payment/returns FAQ) are the one thing that still lives in code (`public/js/whatsapp-widget.js`) — ask me anytime and I'll update the wording for you.
 

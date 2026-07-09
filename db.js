@@ -57,6 +57,70 @@ db.defaults({
     }
   ],
   orders: [],
+  projects: [
+    {
+      id: uuid(),
+      title: 'Lekki Waterfront Villa',
+      location: 'Lekki, Lagos',
+      description: 'Full interior and exterior repaint of a 5-bedroom villa, including weatherproof exterior coating and a custom feature wall in the living room.',
+      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=700',
+      active: true
+    },
+    {
+      id: uuid(),
+      title: 'Wuse Office Complex',
+      location: 'Wuse II, Abuja',
+      description: 'Commercial repaint across 3 floors of office space, completed over a weekend to avoid business disruption. Included wood finishing on reception furniture.',
+      image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=700',
+      active: true
+    },
+    {
+      id: uuid(),
+      title: 'Maitama Family Home',
+      location: 'Maitama, Abuja',
+      description: 'Full exterior repaint and driveway wall coating, plus interior color consultation for a family relocating into a newly built home.',
+      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700',
+      active: true
+    },
+    {
+      id: uuid(),
+      title: 'Garki Retail Storefront',
+      location: 'Garki, Abuja',
+      description: 'Bright, brand-matched storefront repaint for a retail client, including signage-ready wall prep and a durable exterior finish.',
+      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=700',
+      active: true
+    }
+  ],
+  services: [
+    {
+      id: uuid(),
+      title: 'Interior Painting',
+      description: 'Full-room or whole-home interior painting with clean, even coverage and minimal disruption to your space.',
+      image: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600',
+      active: true
+    },
+    {
+      id: uuid(),
+      title: 'Exterior Painting',
+      description: 'Weatherproof exterior coatings built to withstand sun, rain and everyday wear for years to come.',
+      image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600',
+      active: true
+    },
+    {
+      id: uuid(),
+      title: 'Color Consultation',
+      description: 'Not sure what colors work? Our team helps you choose a palette that fits your space and style.',
+      image: 'https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=600',
+      active: true
+    },
+    {
+      id: uuid(),
+      title: 'Wood Finishing & Varnishing',
+      description: 'Protective, high-gloss or matte finishes for doors, furniture and wooden fixtures.',
+      image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=600',
+      active: true
+    }
+  ],
   settings: {
     storeName: 'Oseme Paint World',
     whatsappNumber: '2348000000000',
@@ -66,6 +130,12 @@ db.defaults({
     headerColor: '#FBFAF6',
     primaryColor: '#3F5D4E',
     accentColor: '#B8863B',
+    aboutTitle: 'About Oseme Paint World',
+    aboutBody: 'Oseme Paint World has been supplying quality paints, tools and finishing products for homes and businesses. We combine premium materials with real, hands-on expertise — whether you\'re picking up supplies for a DIY project or need a full professional repaint.',
+    aboutImage: '',
+    contactEmail: 'hello@example.com',
+    contactPhone: '2348000000000',
+    contactAddress: 'Abuja, Nigeria',
     adminPasswordHash: null // set on first run from env
   }
 }).write();

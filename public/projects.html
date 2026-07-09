@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop — Oseme Paint World</title>
+<title>Projects — Oseme Paint World</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
@@ -18,10 +18,10 @@
   </div>
   <nav class="site-nav">
     <a href="/">Home</a>
-    <a href="/shop.html" class="active">Shop</a>
+    <a href="/shop.html">Shop</a>
     <a href="/about.html">About</a>
     <a href="/services.html">Services</a>
-    <a href="/projects.html">Projects</a>
+    <a href="/projects.html" class="active">Projects</a>
     <a href="/contact.html">Contact</a>
   </nav>
   <div class="header-actions">
@@ -31,15 +31,14 @@
   </div>
 </header>
 
-<section class="shop-heading">
-  <h1>Shop all products</h1>
-  <p>Browse the full catalogue — filter by category to find what you need.</p>
-</section>
-
-<section class="catalog" id="catalog">
-  <div class="filters" id="filters"></div>
-  <div class="grid" id="grid">Loading products…</div>
-</section>
+<!-- Filled in by JS: either the full projects grid, or a single project's detail view -->
+<div id="pageContent">
+  <section class="page-heading">
+    <h1>Our Projects</h1>
+    <p>A look at recent work we're proud of.</p>
+  </section>
+  <div class="projects-grid" id="projectsGrid">Loading projects…</div>
+</div>
 
 <footer>© <span id="year"></span> <span id="storeNameFooter">Oseme Paint World</span>. All rights reserved.</footer>
 
@@ -96,7 +95,7 @@
 </button>
 
 <script src="/js/common.js"></script>
-<script src="/js/catalog.js"></script>
+<script src="/js/projects.js"></script>
 <script src="/js/whatsapp-widget.js"></script>
 </body>
 </html>

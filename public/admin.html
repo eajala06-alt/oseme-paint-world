@@ -26,7 +26,10 @@
     <div class="brand">Admin</div>
     <nav>
       <button class="nav-link active" data-tab="products">Products</button>
+      <button class="nav-link" data-tab="projects">Projects</button>
+      <button class="nav-link" data-tab="services">Services</button>
       <button class="nav-link" data-tab="orders">Orders</button>
+      <button class="nav-link" data-tab="pages">Pages</button>
       <button class="nav-link" data-tab="settings">Settings</button>
     </nav>
     <a href="/" class="nav-link" style="margin-top:auto" target="_blank">View store ↗</a>
@@ -53,6 +56,59 @@
         <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
         <tbody id="ordersBody"></tbody>
       </table>
+    </section>
+
+    <!-- Projects tab -->
+    <section id="tab-projects" class="tab">
+      <div class="tab-header">
+        <h2>Projects</h2>
+        <button class="btn-primary" id="newProjectBtn">+ Add project</button>
+      </div>
+      <table class="table">
+        <thead><tr><th></th><th>Title</th><th>Location</th><th>Status</th><th></th></tr></thead>
+        <tbody id="projectsBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Services tab -->
+    <section id="tab-services" class="tab">
+      <div class="tab-header">
+        <h2>Services</h2>
+        <button class="btn-primary" id="newServiceBtn">+ Add service</button>
+      </div>
+      <table class="table">
+        <thead><tr><th></th><th>Title</th><th>Description</th><th>Status</th><th></th></tr></thead>
+        <tbody id="servicesBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Pages tab (About + Contact) -->
+    <section id="tab-pages" class="tab">
+      <div class="tab-header"><h2>Pages</h2></div>
+      <div class="settings-form">
+        <h3 style="margin-top:0">About page</h3>
+        <div class="field">
+          <label>Photo (optional)</label>
+          <div id="aboutImagePreviewWrap" style="margin-bottom:8px"></div>
+          <input type="file" id="aboutImageFile" accept="image/png,image/jpeg,image/webp">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn-secondary" id="uploadAboutImageBtn" style="flex:1">Upload photo</button>
+            <button class="btn-secondary" id="removeAboutImageBtn" style="flex:1;color:var(--danger)">Remove photo</button>
+          </div>
+        </div>
+        <div class="field"><label>Title</label><input id="setAboutTitle"></div>
+        <div class="field"><label>Body text</label><textarea id="setAboutBody" rows="6"></textarea></div>
+        <button class="btn-primary" id="saveAboutBtn">Save about page</button>
+        <div id="aboutMsg" class="success-text"></div>
+
+        <hr style="margin:28px 0">
+        <h3>Contact page</h3>
+        <div class="field"><label>Email</label><input id="setContactEmail"></div>
+        <div class="field"><label>Phone (with country code, digits only)</label><input id="setContactPhone" placeholder="2348012345678"></div>
+        <div class="field"><label>Address</label><input id="setContactAddress"></div>
+        <button class="btn-primary" id="saveContactBtn">Save contact page</button>
+        <div id="contactMsg" class="success-text"></div>
+      </div>
     </section>
 
     <!-- Settings tab -->
@@ -121,7 +177,13 @@
     <div class="field"><label>Price (₦)</label><input type="number" id="p_price"></div>
     <div class="field"><label>Stock</label><input type="number" id="p_stock"></div>
     <div class="field"><label>Category</label><input id="p_category"></div>
-    <div class="field"><label>Image URL</label><input id="p_image" placeholder="https://..."></div>
+    <div class="field">
+      <label>Photo</label>
+      <div id="p_imagePreviewWrap" style="margin-bottom:8px"></div>
+      <input type="hidden" id="p_image">
+      <input type="file" id="p_imageFile" accept="image/png,image/jpeg,image/webp">
+      <button class="btn-secondary" id="p_uploadImageBtn" style="margin-top:8px;width:100%">Upload photo</button>
+    </div>
     <div class="field">
       <label><input type="checkbox" id="p_active" style="width:auto"> Visible on storefront</label>
     </div>
@@ -129,6 +191,57 @@
     <div style="display:flex;gap:10px;margin-top:10px">
       <button class="btn-primary" id="saveProductBtn">Save</button>
       <button class="btn-secondary" id="cancelProductBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Project edit modal -->
+<div class="modal-overlay" id="projectModal">
+  <div class="modal">
+    <h2 id="projectModalTitle">Add project</h2>
+    <input type="hidden" id="pr_id">
+    <div class="field"><label>Title</label><input id="pr_title"></div>
+    <div class="field"><label>Location</label><input id="pr_location" placeholder="e.g. Lekki, Lagos"></div>
+    <div class="field"><label>Description</label><textarea id="pr_description" rows="4"></textarea></div>
+    <div class="field">
+      <label>Photo</label>
+      <div id="pr_imagePreviewWrap" style="margin-bottom:8px"></div>
+      <input type="hidden" id="pr_image">
+      <input type="file" id="pr_imageFile" accept="image/png,image/jpeg,image/webp">
+      <button class="btn-secondary" id="pr_uploadImageBtn" style="margin-top:8px;width:100%">Upload photo</button>
+    </div>
+    <div class="field">
+      <label><input type="checkbox" id="pr_active" style="width:auto"> Visible on site</label>
+    </div>
+    <div id="projectError" class="error-text"></div>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button class="btn-primary" id="saveProjectBtn">Save</button>
+      <button class="btn-secondary" id="cancelProjectBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Service edit modal -->
+<div class="modal-overlay" id="serviceModal">
+  <div class="modal">
+    <h2 id="serviceModalTitle">Add service</h2>
+    <input type="hidden" id="sv_id">
+    <div class="field"><label>Title</label><input id="sv_title"></div>
+    <div class="field"><label>Description</label><textarea id="sv_description" rows="4"></textarea></div>
+    <div class="field">
+      <label>Photo</label>
+      <div id="sv_imagePreviewWrap" style="margin-bottom:8px"></div>
+      <input type="hidden" id="sv_image">
+      <input type="file" id="sv_imageFile" accept="image/png,image/jpeg,image/webp">
+      <button class="btn-secondary" id="sv_uploadImageBtn" style="margin-top:8px;width:100%">Upload photo</button>
+    </div>
+    <div class="field">
+      <label><input type="checkbox" id="sv_active" style="width:auto"> Visible on site</label>
+    </div>
+    <div id="serviceError" class="error-text"></div>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button class="btn-primary" id="saveServiceBtn">Save</button>
+      <button class="btn-secondary" id="cancelServiceBtn">Cancel</button>
     </div>
   </div>
 </div>

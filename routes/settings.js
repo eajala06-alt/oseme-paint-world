@@ -46,15 +46,24 @@ const heroUpload = multer({
   }
 });
 
-// Public: store name, whatsapp number, currency, branding (safe fields only)
+// Public: store name, whatsapp number, currency, branding + about/contact content (safe fields only)
 router.get('/', (req, res) => {
-  const { storeName, whatsappNumber, currency, logoUrl, heroUrl, headerColor, primaryColor, accentColor } = db.get('settings').value();
-  res.json({ storeName, whatsappNumber, currency, logoUrl, heroUrl, headerColor, primaryColor, accentColor });
+  const {
+    storeName, whatsappNumber, currency, logoUrl, heroUrl, headerColor, primaryColor, accentColor,
+    aboutTitle, aboutBody, aboutImage, contactEmail, contactPhone, contactAddress
+  } = db.get('settings').value();
+  res.json({
+    storeName, whatsappNumber, currency, logoUrl, heroUrl, headerColor, primaryColor, accentColor,
+    aboutTitle, aboutBody, aboutImage, contactEmail, contactPhone, contactAddress
+  });
 });
 
-// Admin: update store name / whatsapp number / currency / colors
+// Admin: update store name / whatsapp number / currency / colors / about / contact
 router.put('/', requireAdmin, (req, res) => {
-  const { storeName, whatsappNumber, currency, headerColor, primaryColor, accentColor } = req.body;
+  const {
+    storeName, whatsappNumber, currency, headerColor, primaryColor, accentColor,
+    aboutTitle, aboutBody, aboutImage, contactEmail, contactPhone, contactAddress
+  } = req.body;
   const updates = {};
   if (storeName !== undefined) updates.storeName = storeName;
   if (whatsappNumber !== undefined) updates.whatsappNumber = whatsappNumber;
@@ -62,6 +71,12 @@ router.put('/', requireAdmin, (req, res) => {
   if (headerColor !== undefined) updates.headerColor = headerColor;
   if (primaryColor !== undefined) updates.primaryColor = primaryColor;
   if (accentColor !== undefined) updates.accentColor = accentColor;
+  if (aboutTitle !== undefined) updates.aboutTitle = aboutTitle;
+  if (aboutBody !== undefined) updates.aboutBody = aboutBody;
+  if (aboutImage !== undefined) updates.aboutImage = aboutImage;
+  if (contactEmail !== undefined) updates.contactEmail = contactEmail;
+  if (contactPhone !== undefined) updates.contactPhone = contactPhone;
+  if (contactAddress !== undefined) updates.contactAddress = contactAddress;
   db.get('settings').assign(updates).write();
   res.json(db.get('settings').value());
 });

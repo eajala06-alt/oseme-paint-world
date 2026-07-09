@@ -42,6 +42,19 @@ function showDashboard() {
   loadProducts();
   loadOrders();
   loadSettings();
+  loadProjects();
+  loadServices();
+  loadPagesTab();
+}
+
+// ===== Generic image upload (used by products, projects, services, about photo) =====
+async function uploadImageGeneric(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+  const res = await fetch('/api/uploads', { method: 'POST', body: formData });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Upload failed');
+  return data.url;
 }
 
 // ===== Tabs =====
@@ -96,10 +109,36 @@ function openProductModal(product) {
   document.getElementById('p_category').value = product ? product.category : '';
   document.getElementById('p_image').value = product ? product.image : '';
   document.getElementById('p_active').checked = product ? product.active : true;
+  document.getElementById('p_imageFile').value = '';
+  renderImagePreview('p_imagePreviewWrap', product ? product.image : '');
   productModal.classList.add('open');
 }
 document.getElementById('newProductBtn').onclick = () => openProductModal(null);
 document.getElementById('cancelProductBtn').onclick = () => productModal.classList.remove('open');
+
+function renderImagePreview(wrapId, url) {
+  const wrap = document.getElementById(wrapId);
+  wrap.innerHTML = url
+    ? `<img src="${url}" style="width:100%;max-width:200px;border-radius:8px;display:block">`
+    : `<span style="color:var(--ink-soft);font-size:13px">No photo uploaded yet.</span>`;
+}
+
+document.getElementById('p_uploadImageBtn').onclick = async () => {
+  const fileInput = document.getElementById('p_imageFile');
+  const errorEl = document.getElementById('productError');
+  if (!fileInput.files.length) {
+    errorEl.textContent = 'Choose a photo first.';
+    return;
+  }
+  try {
+    const url = await uploadImageGeneric(fileInput.files[0]);
+    document.getElementById('p_image').value = url;
+    renderImagePreview('p_imagePreviewWrap', url);
+    errorEl.textContent = '';
+  } catch (err) {
+    errorEl.textContent = err.message;
+  }
+};
 
 document.getElementById('saveProductBtn').onclick = async () => {
   const id = document.getElementById('p_id').value;
@@ -165,6 +204,247 @@ async function loadOrders() {
     };
   });
 }
+
+// ===== Projects =====
+async function loadProjects() {
+  const res = await fetch('/api/projects/admin/all');
+  const projects = await res.json();
+  const body = document.getElementById('projectsBody');
+  if (!projects.length) {
+    body.innerHTML = `<tr><td colspan="5">No projects yet.</td></tr>`;
+    return;
+  }
+  body.innerHTML = projects.map(p => `
+    <tr>
+      <td><img src="${p.image}"></td>
+      <td>${p.title}</td>
+      <td>${p.location || '—'}</td>
+      <td>${p.active ? 'Visible' : 'Hidden'}</td>
+      <td class="row-actions">
+        <button data-id="${p.id}" class="edit-project">Edit</button>
+        <button data-id="${p.id}" class="del-project">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+
+  body.querySelectorAll('.edit-project').forEach(btn => btn.onclick = () => openProjectModal(projects.find(p => p.id === btn.dataset.id)));
+  body.querySelectorAll('.del-project').forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm('Delete this project?')) return;
+      await fetch('/api/projects/' + btn.dataset.id, { method: 'DELETE' });
+      loadProjects();
+    };
+  });
+}
+
+const projectModal = document.getElementById('projectModal');
+function openProjectModal(project) {
+  document.getElementById('projectError').textContent = '';
+  document.getElementById('projectModalTitle').textContent = project ? 'Edit project' : 'Add project';
+  document.getElementById('pr_id').value = project ? project.id : '';
+  document.getElementById('pr_title').value = project ? project.title : '';
+  document.getElementById('pr_location').value = project ? project.location : '';
+  document.getElementById('pr_description').value = project ? project.description : '';
+  document.getElementById('pr_image').value = project ? project.image : '';
+  document.getElementById('pr_active').checked = project ? project.active : true;
+  document.getElementById('pr_imageFile').value = '';
+  renderImagePreview('pr_imagePreviewWrap', project ? project.image : '');
+  projectModal.classList.add('open');
+}
+document.getElementById('newProjectBtn').onclick = () => openProjectModal(null);
+document.getElementById('cancelProjectBtn').onclick = () => projectModal.classList.remove('open');
+
+document.getElementById('pr_uploadImageBtn').onclick = async () => {
+  const fileInput = document.getElementById('pr_imageFile');
+  const errorEl = document.getElementById('projectError');
+  if (!fileInput.files.length) { errorEl.textContent = 'Choose a photo first.'; return; }
+  try {
+    const url = await uploadImageGeneric(fileInput.files[0]);
+    document.getElementById('pr_image').value = url;
+    renderImagePreview('pr_imagePreviewWrap', url);
+    errorEl.textContent = '';
+  } catch (err) {
+    errorEl.textContent = err.message;
+  }
+};
+
+document.getElementById('saveProjectBtn').onclick = async () => {
+  const id = document.getElementById('pr_id').value;
+  const payload = {
+    title: document.getElementById('pr_title').value.trim(),
+    location: document.getElementById('pr_location').value.trim(),
+    description: document.getElementById('pr_description').value.trim(),
+    image: document.getElementById('pr_image').value.trim(),
+    active: document.getElementById('pr_active').checked
+  };
+  const errorEl = document.getElementById('projectError');
+  if (!payload.title) { errorEl.textContent = 'Title is required.'; return; }
+  const res = await fetch(id ? '/api/projects/' + id : '/api/projects', {
+    method: id ? 'PUT' : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    projectModal.classList.remove('open');
+    loadProjects();
+  } else {
+    const data = await res.json();
+    errorEl.textContent = data.error || 'Could not save project';
+  }
+};
+
+// ===== Services =====
+async function loadServices() {
+  const res = await fetch('/api/services/admin/all');
+  const services = await res.json();
+  const body = document.getElementById('servicesBody');
+  if (!services.length) {
+    body.innerHTML = `<tr><td colspan="4">No services yet.</td></tr>`;
+    return;
+  }
+  body.innerHTML = services.map(s => `
+    <tr>
+      <td><img src="${s.image}"></td>
+      <td>${s.title}</td>
+      <td>${(s.description || '').slice(0, 60)}${s.description && s.description.length > 60 ? '…' : ''}</td>
+      <td>${s.active ? 'Visible' : 'Hidden'}</td>
+      <td class="row-actions">
+        <button data-id="${s.id}" class="edit-service">Edit</button>
+        <button data-id="${s.id}" class="del-service">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+
+  body.querySelectorAll('.edit-service').forEach(btn => btn.onclick = () => openServiceModal(services.find(s => s.id === btn.dataset.id)));
+  body.querySelectorAll('.del-service').forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm('Delete this service?')) return;
+      await fetch('/api/services/' + btn.dataset.id, { method: 'DELETE' });
+      loadServices();
+    };
+  });
+}
+
+const serviceModal = document.getElementById('serviceModal');
+function openServiceModal(service) {
+  document.getElementById('serviceError').textContent = '';
+  document.getElementById('serviceModalTitle').textContent = service ? 'Edit service' : 'Add service';
+  document.getElementById('sv_id').value = service ? service.id : '';
+  document.getElementById('sv_title').value = service ? service.title : '';
+  document.getElementById('sv_description').value = service ? service.description : '';
+  document.getElementById('sv_image').value = service ? service.image : '';
+  document.getElementById('sv_active').checked = service ? service.active : true;
+  document.getElementById('sv_imageFile').value = '';
+  renderImagePreview('sv_imagePreviewWrap', service ? service.image : '');
+  serviceModal.classList.add('open');
+}
+document.getElementById('newServiceBtn').onclick = () => openServiceModal(null);
+document.getElementById('cancelServiceBtn').onclick = () => serviceModal.classList.remove('open');
+
+document.getElementById('sv_uploadImageBtn').onclick = async () => {
+  const fileInput = document.getElementById('sv_imageFile');
+  const errorEl = document.getElementById('serviceError');
+  if (!fileInput.files.length) { errorEl.textContent = 'Choose a photo first.'; return; }
+  try {
+    const url = await uploadImageGeneric(fileInput.files[0]);
+    document.getElementById('sv_image').value = url;
+    renderImagePreview('sv_imagePreviewWrap', url);
+    errorEl.textContent = '';
+  } catch (err) {
+    errorEl.textContent = err.message;
+  }
+};
+
+document.getElementById('saveServiceBtn').onclick = async () => {
+  const id = document.getElementById('sv_id').value;
+  const payload = {
+    title: document.getElementById('sv_title').value.trim(),
+    description: document.getElementById('sv_description').value.trim(),
+    image: document.getElementById('sv_image').value.trim(),
+    active: document.getElementById('sv_active').checked
+  };
+  const errorEl = document.getElementById('serviceError');
+  if (!payload.title) { errorEl.textContent = 'Title is required.'; return; }
+  const res = await fetch(id ? '/api/services/' + id : '/api/services', {
+    method: id ? 'PUT' : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    serviceModal.classList.remove('open');
+    loadServices();
+  } else {
+    const data = await res.json();
+    errorEl.textContent = data.error || 'Could not save service';
+  }
+};
+
+// ===== Pages (About + Contact) =====
+async function loadPagesTab() {
+  const res = await fetch('/api/settings');
+  const s = await res.json();
+  document.getElementById('setAboutTitle').value = s.aboutTitle || '';
+  document.getElementById('setAboutBody').value = s.aboutBody || '';
+  document.getElementById('setContactEmail').value = s.contactEmail || '';
+  document.getElementById('setContactPhone').value = s.contactPhone || '';
+  document.getElementById('setContactAddress').value = s.contactAddress || '';
+  renderImagePreview('aboutImagePreviewWrap', s.aboutImage || '');
+}
+
+document.getElementById('uploadAboutImageBtn').onclick = async () => {
+  const fileInput = document.getElementById('aboutImageFile');
+  if (!fileInput.files.length) return;
+  try {
+    const url = await uploadImageGeneric(fileInput.files[0]);
+    await fetch('/api/settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ aboutImage: url })
+    });
+    renderImagePreview('aboutImagePreviewWrap', url);
+    fileInput.value = '';
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
+document.getElementById('removeAboutImageBtn').onclick = async () => {
+  await fetch('/api/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ aboutImage: '' })
+  });
+  renderImagePreview('aboutImagePreviewWrap', '');
+};
+
+document.getElementById('saveAboutBtn').onclick = async () => {
+  await fetch('/api/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      aboutTitle: document.getElementById('setAboutTitle').value.trim(),
+      aboutBody: document.getElementById('setAboutBody').value.trim()
+    })
+  });
+  const msgEl = document.getElementById('aboutMsg');
+  msgEl.textContent = 'Saved!';
+  setTimeout(() => msgEl.textContent = '', 2000);
+};
+
+document.getElementById('saveContactBtn').onclick = async () => {
+  await fetch('/api/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contactEmail: document.getElementById('setContactEmail').value.trim(),
+      contactPhone: document.getElementById('setContactPhone').value.trim(),
+      contactAddress: document.getElementById('setContactAddress').value.trim()
+    })
+  });
+  const msgEl = document.getElementById('contactMsg');
+  msgEl.textContent = 'Saved!';
+  setTimeout(() => msgEl.textContent = '', 2000);
+};
 
 // ===== Settings =====
 async function loadSettings() {

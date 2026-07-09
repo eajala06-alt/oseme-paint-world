@@ -8,6 +8,9 @@ const { router: authRouter } = require('./routes/auth');
 const productsRouter = require('./routes/products');
 const ordersRouter = require('./routes/orders');
 const settingsRouter = require('./routes/settings');
+const projectsRouter = require('./routes/projects');
+const servicesRouter = require('./routes/services');
+const uploadsRouter = require('./routes/uploads');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +26,9 @@ app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/settings', settingsRouter);
+app.use('/api/projects', projectsRouter);
+app.use('/api/services', servicesRouter);
+app.use('/api/uploads', uploadsRouter);
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 

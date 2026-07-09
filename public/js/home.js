@@ -11,23 +11,37 @@ function renderHero(settings) {
   }
 }
 
-function renderFeatured() {
-  const grid = document.getElementById('featuredGrid');
-  const items = window.PRODUCTS.filter(p => p.active).slice(0, 4);
-  if (!items.length) {
-    grid.innerHTML = `<p>Products coming soon.</p>`;
+async function renderProjectsPreview() {
+  const scroller = document.getElementById('projectsScroller');
+  const res = await fetch('/api/projects');
+  const projects = await res.json();
+
+  if (!projects.length) {
+    scroller.innerHTML = `<p>Projects coming soon.</p>`;
     return;
   }
-  grid.innerHTML = items.map(renderProductCard).join('');
-  bindAddToCartButtons(grid);
+
+  scroller.innerHTML = projects.map(p => `
+    <a class="project-card" href="/projects.html?id=${p.id}">
+      <img src="${p.image}" alt="${p.title}" loading="lazy">
+      <div class="project-card-title">${p.title}</div>
+    </a>
+  `).join('');
+}
+
+function initScrollArrow() {
+  const scroller = document.getElementById('projectsScroller');
+  const btn = document.getElementById('scrollArrowBtn');
+  btn.onclick = () => scroller.scrollBy({ left: 320, behavior: 'smooth' });
 }
 
 (async function init() {
   document.getElementById('year').textContent = new Date().getFullYear();
   const settings = await loadSettings();
   renderHero(settings);
-  await loadProducts();
-  renderFeatured();
+  await loadProducts(); // needed so the cart drawer can show correct item info if the cart already has items
+  await renderProjectsPreview();
+  initScrollArrow();
   initCartUI();
   renderCart();
 })();
